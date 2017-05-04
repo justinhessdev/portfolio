@@ -28,5 +28,10 @@
   "bugs": {
     "url": "https://github.com/BlackrockDigital/startbootstrap-freelancer/issues"
   },
-  "homepage": "https://github.com/BlackrockDigital/startbootstrap-freelancer#readme"
+  "homepage": "https://github.com/BlackrockDigital/startbootstrap-freelancer#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "morgan": "^1.8.1"
+  }
 }
