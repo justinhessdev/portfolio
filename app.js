@@ -1,83 +1,60 @@
 const
     express = require('express'),
     app = express(),
+    mongoose = require('mongoose'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
-    nodemailer = require('nodemailer')
+    nodemailer = require('nodemailer'),
+    ejs = require('ejs'),
+    ejsLayouts = require('express-ejs-layouts'),
+    methodOverride = require('method-override'),
+    jwt = require('jsonwebtoken'),
+    port = (process.env.PORT || 3000),
+    mongoConnectionString = (process.env.MONGODB_URL || 'mongodb://localhost/winit-app'),
+    messageRoutes = require('./routes/messages.js'),
+    Message = require('./models/Message.js'),
+    Token = require('./models/Token.js')
 
-// environment port
-const port = process.env.PORT || 3000
+// mongoose connection
+mongoose.connect(mongoConnectionString, (err) => {
+  console.log(err || "Connected to MongoDB (winit-app)")
+})
 
-app.use(express.static(process.env.PWD + '/public'))
-
+app.use(methodOverride('_method'))
+app.set('view engine', 'ejs')
+app.use(ejsLayouts)
+app.use(express.static(__dirname + '/public'))
 app.use(logger('dev'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
+app.use('/messages', messageRoutes)
+
+// send res (response) back to client when client makes get request at root.
+// response contains sendFile of our client index.html so client/chrome will know to populate page
 app.get('/', (req, res) => {
-  res.sendFile("./index.html", {root: __dirname})
+  res.render('index')
 })
 
-app.post('/contact', (req, res) => {
-  console.log("The request body is: ");
-  console.log(req.body);
+app.post('/contact' , (req, res) => {
+  var newMessage = new Message(req.body)
+  newMessage.save((err, message) => {
+    if(err) console.log(err)
+    console.log("Message saved in DB is: ");
+    console.log(message);
 
-  // if(req.body.company) {
-  //   res.render('contact', {
-  //     title: 'Contact',
-  //     err: true,
-  //     page: 'contact',
-  //     type: 'empty',
-  //     body: req.body.message,
-  //     name: req.body.name,
-  //     email: req.body.email,
-  //     msg: 'Spam detected',
-  //     description: 'spam'});
-  //   return;
-  // }
-
-  // if(! req.body.name || ! req.body.email || ! req.body.message) {
-  //   res.render('contact', {
-  //     title: 'Contact',
-  //     err: true,
-  //     page: 'contact',
-  //     type: 'empty',
-  //     body: req.body.message,
-  //     name: req.body.name,
-  //     email: req.body.email,
-  //     msg: 'fill in info',
-  //     description: 'infooo'});
-  //   return;
-  // }
-
-  var transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-          user: 'winitdevproject@gmail.com', // Your email id
-          pass: 'winit12345' // Your password
-      }
-  });
-
-  var mailOptions = {
-      from: req.body.email,
-      to: 'justinhessdev@gmail.com',
-      subject:'Winit Project -- Reaching out',
-      text: 'Email: ' + req.body.email + '\nPhone: ' + req.body.phone + '\nMessage: ' + req.body.message
-  };
-
-  transporter.sendMail(mailOptions, function(error, info){
-      if(error){
-          console.log(error);
-          res.json({failure: 'error'});
-      }else{
-          console.log('Message sent: ' + info.response);
-          res.json({
-            "success": 'Your message was sent',
-            "next steps": "I will respond to your email shortly"
-          });
-      };
-  });
-});
+    // sign synchronously
+    var genToken = jwt.sign({ messageId: message._id }, 'shhhhh');
+    var newToken = new Token()
+    newToken.token = genToken
+    newToken.save((err, token) => {
+      if(err) console.log(err);
+      console.log("The token is: ");
+      console.log(token);
+      res.render('token', {message, token})
+    })
+  })
+})
 
 app.listen(port, (err) => {
   console.log(err || 'listening on port ' + port)
