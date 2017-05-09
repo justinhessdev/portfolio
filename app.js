@@ -34,6 +34,7 @@ app.use(methodOverride('_method'));
 app.set('view engine', 'ejs');
 app.use(ejsLayouts);
 app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(process.env.HEROKU_URL, '/public')));
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -68,7 +69,7 @@ app.post('/contact', (req, res) => {
     // sign synchronously
     const
       genToken = jwt.sign({ messageId: message._id }, 'shhhhh'),
-      genURL = `https://winit-app.herokuapp.com/token/${genToken}`;
+      genURL = `${process.env.HEROKU_URL}/token/${genToken}`;
     bitly.shorten(genURL)
     .then((response) => {
       const shortUrl = response.data.url;
@@ -77,6 +78,9 @@ app.post('/contact', (req, res) => {
   });
 });
 
+/*
+  API FOR THE TOKEN GENERATION --- TO VIEW THE MESSAGE WITH THE CONTENT
+*/
 app.get('/token/:id', (req, res) => {
     // verify a token symmetric - synchronous
   const decoded = jwt.verify(req.params.id, 'shhhhh');
