@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/message/:id', (req, res) => {
+app.get('/messages/:id', (req, res) => {
   Message.findById(req.params.id, (err, message) => {
     if (req.xhr) {
       res.json(message);
@@ -56,7 +56,7 @@ app.get('/message/:id', (req, res) => {
       res.render('message', { message });
     }
   });
-})
+});
 
 app.post('/contact', (req, res) => {
   request
