@@ -59,13 +59,21 @@ app.post('/contact' , (req, res) => {
   })
 })
 
-app.get('/token/:id' , (req, res) => {
-  // verify a token symmetric - synchronous
-  var decoded = jwt.verify(req.params.id, 'shhhhh');
-  Message.findById(decoded.messageId, (err, message) => {
-    if (err) res.json({error: "401"})
-    res.render('message', {message})
-  })
+app.get('/bit.ly/:id' , (req, res) => {
+  bitly.expand("http://bit.ly/" + req.params.id)
+  .then(function(response) {
+    var long_url = response.data.url
+    console.log("Long url is: ");
+    console.log(long_url);
+    // verify a token symmetric - synchronous
+    // var decoded = jwt.verify(req.params.id, 'shhhhh');
+    // Message.findById(decoded.messageId, (err, message) => {
+    //   if (err) res.json({error: "401"})
+    //   res.render('message', {message})
+    // })
+  }, function(error) {
+    throw error;
+  });
 })
 
 
