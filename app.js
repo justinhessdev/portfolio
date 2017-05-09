@@ -81,7 +81,7 @@ app.post('/contact', (req, res) => {
     "message": {
         "from_email": "winitdevproject@gmail.com",
         "from_name": "Mr Winit",
-        "to":[{"email": req.body.email, "name": "someone's_name"}], // Array of recipients
+        "to":[{"email": req.body.contact, "name": "someone's_name"}], // Array of recipients
         "subject": "Winit Email",
         "text": req.body.message, // Alternatively, use the "html" key to send HTML emails rather than plaintext
     },
