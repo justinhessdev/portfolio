@@ -44,17 +44,12 @@ app.post('/contact' , (req, res) => {
   var newMessage = new Message(req.body)
   newMessage.save((err, message) => {
     if(err) console.log(err)
-    console.log("Message saved in DB is: ");
-    console.log(message);
-
     // sign synchronously
     var genToken = jwt.sign({ messageId: message._id }, 'shhhhh');
     var newToken = new Token()
     newToken.token = genToken
     newToken.save((err, token) => {
       if(err) console.log(err);
-      console.log("The token is: ");
-      console.log(token);
       res.render('token', {message, token})
     })
   })
@@ -63,17 +58,9 @@ app.post('/contact' , (req, res) => {
 app.get('/token/:id' , (req, res) => {
   // verify a token symmetric - synchronous
   var decoded = jwt.verify(req.params.id, 'shhhhh');
-  console.log(decoded.messageId) // messageId --- payload
-
   Message.findById(decoded.messageId, (err, message) => {
-    if (err) res.json({error: err})
-    console.log("The message is: ");
-    console.log(message);
-    console.log(req.query);
-
-    res.render('message', {message}, (err, m)=> {
-      res.redirect('/messages/'+message._id)
-    })
+    if (err) res.json({error: "401"})
+    res.render('message', {message})
   })
 })
 
