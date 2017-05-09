@@ -11,9 +11,52 @@
 ###### 5. Walla, the app is up and running on localhost:3000
 
 ### General Layout:
-###### A user fills out this form, 
+###### A user fills out this form:
 
 ![Alt text](./public/img/winit-form.png?raw=true "Contact Form")
+
+###### index.ejs
+
+	  <!-- Contact Section -->
+	  <section id="contact">
+	      <div class="container">
+	          <div class="row">
+	              <div class="col-lg-12 text-center">
+	                  <h2>Contact Me</h2>
+	                  <hr class="star-primary">
+	              </div>
+	          </div>
+	          <div class="row">
+	              <div class="col-lg-8 col-lg-offset-2">
+	                  <!-- To configure the contact form email address, go to mail/contact_me.php and update the email address in the PHP file on line 19. -->
+	                  <!-- The form should work on most web servers, but if the form is not working you may need to configure your web server differently. -->
+	                  <form name="sentMessage" action="/contact" method="post" id="contactForm">
+	                      <div class="row control-group">
+	                          <div class="form-group col-xs-12 floating-label-form-group controls">
+	                              <label for="contact">Contact</label>
+	                              <input name="contact" type="email" class="form-control" placeholder="Email" id="email" required>
+	                              <p class="help-block text-danger"></p>
+	                          </div>
+	                      </div>
+	                      <div class="row control-group">
+	                          <div class="form-group col-xs-12 floating-label-form-group controls">
+	                              <label for="message">Message</label>
+	                              <textarea name="message" rows="5" class="form-control" placeholder="Message" id="message" required data-validation-required-message="Please enter a message."></textarea>
+	                              <p class="help-block text-danger"></p>
+	                          </div>
+	                      </div>
+	                      <br>
+	                      <div id="success"></div>
+	                      <div class="row">
+	                          <div class="form-group col-xs-12">
+	                              <button id="submit" type="submit" class="btn btn-success btn-lg">Send</button>
+	                          </div>
+	                      </div>
+	                  </form>
+	              </div>
+	          </div>
+	      </div>
+	  </section>
 
 ##### On Submission, a POST request is sent to '/contacts' on the server side:
 
@@ -72,19 +115,13 @@
 #### I'll explain this in steps:
 	
 ###### When the request is sent the data gets saved in the Message DB:
-###### Message.js
-    const
-      mongoose = require('mongoose'),
-      messageSchema = new mongoose.Schema({
-        contact: { type: String }, // email or cell number
-        message: { type: String }, // message
-      }, { timestamps: true });
 
-
-    const Message = mongoose.model('Message', messageSchema);
-
-    module.exports = Message;
-    
+	app.post('/contact', (req, res) => {
+	  const newMessage = new Message(req.body);
+	  newMessage.save((err, message) => {...}
+      ....
+      ....
+    }
 ##### Next: I generate a Json Web Token and put the messageId as the payload: npm install jsonwebtoken --save
 
 	// sign synchronously
@@ -92,7 +129,7 @@
 	      genToken = jwt.sign({ messageId: message._id }, 'shhhhh'),
 	      genURL = `${process.env.HEROKU_URL}/token/${genToken}`;    
 	      
-###### This generates https://winit-app.herokuapp.com/aaaaaa.bbbbbb.cccccc
+##### URL: https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc
 
 ##### Then I shorten the URL using Bityl: npm install bitly --save
 
@@ -130,3 +167,71 @@
       
 ###### And the email gets sent to the Users email address -- and it contains a link to the content he filled out --- hidden using the Bitly shortURL
 
+![Alt text](./public/img/winit-gmail.png?raw=true "Email message")
+
+##### Now: When the user clicks on the Bitly link it generates the longUrl: https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc which in turn hits my API:
+
+	/*
+		API
+	*/
+	app.get('/token/:id', (req, res) => {
+	    // verify a token symmetric - synchronous
+	  const decoded = jwt.verify(req.params.id, 'shhhhh');
+	  Message.findById(decoded.messageId, (err, message) => {
+	    if (err) { return res.json({ error: '401' }); }
+	    return res.redirect(`/messages/${message._id}`);
+	  });
+	});
+	
+##### Then the API decodes the id: aaaaaa.bbbbbb.cccccc and we grab the message id that was in the Payload. We validate the message id against our DB. If it's there we Redirect to /messages/messageId which hits our route:
+
+
+###### routes/messages.js:
+
+	messageRouter.route('/:id')
+	  .get((req, res) => {
+	    Message.findById(req.params.id, (err, message) => {
+	      if (req.xhr) {
+	        res.json(message);
+	      } else {
+	        res.render('message', { message });
+	      }
+	    });
+	  })
+
+##### And then message.ejs is rendered and we pass in the message object returned from the DB
+
+###### views/message.ejs
+
+	<div class="row control-group">
+	    <div class="form-group col-xs-12 floating-label-form-group controls">
+	      <h3>Congrats! You viewed the message</span></h3>
+	    </div>
+	</div>
+	<br>
+	<br>
+	<div class="row control-group">
+	    <div class="form-group col-xs-12 floating-label-form-group controls">
+	      <h3>Contact Info: <span class="label label-default"><%- message.contact %></span></h3>
+	    </div>
+	</div>
+	<div class="row control-group">
+	    <div class="form-group col-xs-12 floating-label-form-group controls">
+	      <h3>Message: <span class="label label-default"><%- message.message %></span></h3>
+	    </div>
+	</div>
+	<br>
+	<br>
+	<div class="row control-group">
+	    <div class="form-group col-xs-12 floating-label-form-group controls">
+	      <h3>Time to Celebrate!</span></h3>
+	    </div>
+	</div>
+
+##### In the end I am taken to a page back on the server which shows the message I provided for that link
+
+##### And when you actually click on the link in the email:
+
+![Alt text](./public/img/winit-open-link.png?raw=true "Contact Form")
+
+###### And Notice how the URL was redirected from the API: /token/:id to messages/:id
