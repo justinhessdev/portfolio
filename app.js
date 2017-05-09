@@ -61,20 +61,20 @@ app.get('/messages/:id', (req, res) => {
 });
 
 app.post('/contact', (req, res) => {
-  request
-    .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/lists/' + mailchimpListUniqueId + '/members/')
-    .set('Content-Type', 'application/json;charset=utf-8')
-    .set('Authorization', 'Basic ' + new Buffer('any:' + mailchimpApiKey).toString('base64'))
-    .send({
-      'email_address': req.body.contact,
-      'message': req.body.message,
-      'status': 'subscribed',
-    })
-      .end((err, response) => {
-        if (err) console.log(err);
-        console.log('The response is: ');
-        console.log(response.text);
-      });
+  // request
+  //   .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/lists/' + mailchimpListUniqueId + '/members/')
+  //   .set('Content-Type', 'application/json;charset=utf-8')
+  //   .set('Authorization', 'Basic ' + new Buffer('any:' + mailchimpApiKey).toString('base64'))
+  //   .send({
+  //     'email_address': req.body.contact,
+  //     'message': req.body.message,
+  //     'status': 'subscribed',
+  //   })
+  //     .end((err, response) => {
+  //       if (err) console.log(err);
+  //       console.log('The response is: ');
+  //       console.log(response.text);
+  //     });
 
 
   mandrill_client.messages.send({
@@ -83,8 +83,10 @@ app.post('/contact', (req, res) => {
         "from_name": "Mr Winit",
         "to":[{"email": req.body.email, "name": "someone's_name"}], // Array of recipients
         "subject": "Winit Email",
-        "text": req.body.message // Alternatively, use the "html" key to send HTML emails rather than plaintext
+        "text": req.body.message, // Alternatively, use the "html" key to send HTML emails rather than plaintext
     },
+  }, (response) => {
+    console.log(response);
   });
 
 
