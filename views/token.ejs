@@ -2,14 +2,14 @@
   <h1>Email: <%- message.contact %></h1>
 
   <h5>To view content click the link below</h5>
-    <div>Token:<a id="<%= token._id %>"><%- token.token %></a></div>
+    <div>Token:<a id="<%= token.token %>"><%- token.token %></a></div>
 </div>
 
 <script type="text/javascript">
   $('#<%= token._id %>').on('click', function(evt) {
     console.log('clickeddddd');
     $.ajax({
-     url: '/messages/<%= message._id %>',
+     url: '/token/<%= token.token %>',
      method: 'GET'
    }).done(function(message) {
       console.log(message);

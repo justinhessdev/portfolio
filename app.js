@@ -60,6 +60,12 @@ app.post('/contact' , (req, res) => {
   })
 })
 
+app.get('/token/:id' , (req, res) => {
+  res.json({token: req.params.id})
+})
+
+
+
 app.listen(port, (err) => {
   console.log(err || 'listening on port ' + port)
 });
