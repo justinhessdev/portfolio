@@ -69,7 +69,9 @@ app.get('/token/:id' , (req, res) => {
     if (err) res.json({error: err})
     console.log("The message is: ");
     console.log(message);
-    res.render('message', {message})
+    console.log(req.query);
+    res.redirect('/messages/'+messageId, {message})
+    // res.render('message', {message})
   })
 })
 
