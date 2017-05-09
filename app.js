@@ -60,7 +60,7 @@ app.post('/contact' , (req, res) => {
 })
 
 app.get('/bit.ly/:id' , (req, res) => {
-    verify a token symmetric - synchronous
+    // verify a token symmetric - synchronous
     var decoded = jwt.verify(req.params.id, 'shhhhh');
     Message.findById(decoded.messageId, (err, message) => {
       if (err) res.json({error: "401"})
