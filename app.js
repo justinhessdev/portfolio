@@ -48,15 +48,11 @@ app.post('/contact' , (req, res) => {
     if(err) console.log(err)
     // sign synchronously
     var genToken = jwt.sign({ messageId: message._id }, 'shhhhh');
-    bitly.shorten('https://github.com/tanepiper/node-bitly')
+    var genURL = "https://winit-app.herokuapp.com/token/"+genToken;
+    bitly.shorten(genURL)
     .then(function(response) {
       var short_url = response.data.url
-      // var newToken = new Token()
-      // newToken.token = genToken
-      // newToken.save((err, token) => {
-      //   if(err) console.log(err);
-        res.render('token', {message:message, token: short_url})
-      // })
+      res.render('token', {short_url})
     }, function(error) {
       throw error;
     });
