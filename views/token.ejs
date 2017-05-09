@@ -6,7 +6,7 @@
 </div>
 
 <script type="text/javascript">
-  $('#<%= token._id %>').on('click', function(evt) {
+  $('#<%= token.token %>').on('click', function(evt) {
     console.log('clickeddddd');
     $.ajax({
      url: '/token/<%= token.token %>',
