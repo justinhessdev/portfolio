@@ -66,12 +66,7 @@ app.get('/bit.ly/:id' , (req, res) => {
       if (err) res.json({error: "401"})
       res.render('message', {message})
     })
-  }, function(error) {
-    throw error;
   });
-})
-
-
 
 app.listen(port, (err) => {
   console.log(err || 'listening on port ' + port)
