@@ -67,7 +67,9 @@ app.get('/token/:id' , (req, res) => {
 
   Message.findById(decoded.messageId, (err, message) => {
     if (err) res.json({error: err})
-    res.redirect('/messages/'+message._id, {message})
+    console.log("The message is: ");
+    console.log(message);
+    res.render('message', {message})
   })
 })
 
