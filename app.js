@@ -10,6 +10,8 @@ const
     ejsLayouts = require('express-ejs-layouts'),
     methodOverride = require('method-override'),
     jwt = require('jsonwebtoken'),
+    Bitly = require('bitly'),
+    bitly = new Bitly('b4ec80a1062537de1006970c9b65eb1217cb624d');
     port = (process.env.PORT || 3000),
     mongoConnectionString = (process.env.MONGODB_URL || 'mongodb://localhost/winit-app'),
     messageRoutes = require('./routes/messages.js'),
@@ -46,12 +48,18 @@ app.post('/contact' , (req, res) => {
     if(err) console.log(err)
     // sign synchronously
     var genToken = jwt.sign({ messageId: message._id }, 'shhhhh');
-    var newToken = new Token()
-    newToken.token = genToken
-    newToken.save((err, token) => {
-      if(err) console.log(err);
-      res.render('token', {message, token})
-    })
+    bitly.shorten('https://github.com/tanepiper/node-bitly')
+    .then(function(response) {
+      var short_url = response.data.url
+      // var newToken = new Token()
+      // newToken.token = genToken
+      // newToken.save((err, token) => {
+      //   if(err) console.log(err);
+        res.render('token', {message:message, token: short_url})
+      // })
+    }, function(error) {
+      throw error;
+    });
   })
 })
 
