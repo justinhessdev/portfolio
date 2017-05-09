@@ -47,6 +47,17 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+app.get('/message/:id', (req, res) => {
+  Message.findById(req.params.id, (err, message) => {
+    if (req.xhr) {
+      res.json(message);
+    } else {
+      console.log('I am routing to message');
+      res.render('message', { message });
+    }
+  });
+})
+
 app.post('/contact', (req, res) => {
   request
     .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/lists/' + mailchimpListUniqueId + '/members/')
