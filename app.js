@@ -49,8 +49,6 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-
-
 app.post('/contact', (req, res) => {
   /*
   MAILCHIMP LOGIC ...
@@ -87,9 +85,9 @@ app.post('/contact', (req, res) => {
   // }, (response) => {
   //   console.log(response);
   // });
+
 /*
-  Workaround: Generate a new page with bitly link.
-  When clikced get forwarded to API call and displays the info
+  FINALLY --- USING NODEMAILER MODULE
 */
   const newMessage = new Message(req.body);
   newMessage.save((err, message) => {
