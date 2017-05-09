@@ -70,7 +70,7 @@ app.get('/token/:id' , (req, res) => {
     console.log("The message is: ");
     console.log(message);
     console.log(req.query);
-    res.redirect('/messages/'+messageId, {message})
+    res.redirect('/messages/'+message._id, {message})
     // res.render('message', {message})
   })
 })
