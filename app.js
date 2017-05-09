@@ -93,7 +93,7 @@ app.post('/contact', (req, res) => {
 */
   const newMessage = new Message(req.body);
   newMessage.save((err, message) => {
-    if (err) console.log(err);
+    if (err) { return console.log(err); }
     // sign synchronously
     const
       genToken = jwt.sign({ messageId: message._id }, 'shhhhh'),
@@ -109,8 +109,7 @@ app.post('/contact', (req, res) => {
         },
       });
 
-      const text = `Congrats! You received the special email.
-      \nTo view the hidden message click this link: ${shortUrl}`
+      const text = `Congrats! You received the special email. Click this link to see your hidden message: ${shortUrl}`;
       console.log('created');
       transporter.sendMail({
         from: 'winitdevproject@gmail.com',
@@ -119,18 +118,14 @@ app.post('/contact', (req, res) => {
         html: text,
       }, (error, info) => {
         if (error) {
-          console.log(error);
-          res.json({ failure: 'error' });
-        } else {
-          console.log('Message sent: ' + info.response);
-          res.json({
-            success: 'Your message was sent',
-            'next steps': 'I will respond to your email shortly',
-          });
+          return res.json({ failure: error });
         }
+        return res.json({
+          success: 'Your message was sent',
+          'next steps': 'I will respond to your email shortly',
+          info: info.response,
+        });
       });
-
-
     });
   });
 });
@@ -142,9 +137,8 @@ app.get('/token/:id', (req, res) => {
     // verify a token symmetric - synchronous
   const decoded = jwt.verify(req.params.id, 'shhhhh');
   Message.findById(decoded.messageId, (err, message) => {
-    if (err) res.json({ error: '401' });
-    console.log("In the api -- redirecting to messages/id");
-    res.redirect(`/messages/${message._id}`);
+    if (err) { return res.json({ error: '401' }); }
+    return res.redirect(`/messages/${message._id}`);
   });
 });
 

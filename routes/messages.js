@@ -9,14 +9,15 @@ const
 messageRouter.route('/')
   .get((req, res) => {
     Message.find({}, (err, messages) => {
-      res.json(messages);
+      if (err) { return console.log(err); }
+      return res.json(messages);
     });
   })
    .post((req, res) => {
      const newMessage = new Message(req.body);
      newMessage.save((err, message) => {
-       if (err) console.log(err)
-       res.json(message);
+       if (err) { return console.log(err); }
+       return res.json(message);
      });
    });
 
@@ -26,21 +27,20 @@ messageRouter.route('/:id')
       if (req.xhr) {
         res.json(message);
       } else {
-        console.log('I am routing to message');
         res.render('message', { message });
       }
     });
   })
   .delete((req, res) => {
     Message.findByIdAndRemove(req.params.id, (err) => {
-      if (err) console.log(err)
-      res.json({ message: 'deleted' });
+      if (err) { return console.log(err); }
+      return res.json({ message: 'deleted' });
     });
   })
   .patch((req, res) => {
     Message.findByIdAndUpdate(req.params.id, req.body, { new: true }, (err, message) => {
-    // respond here
-      res.json(message);
+      if (err) { return console.log(err); }
+      return res.json(message);
     });
   });
 
