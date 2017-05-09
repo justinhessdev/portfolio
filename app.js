@@ -9,13 +9,17 @@ const
   logger = require('morgan'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  nodemailer = require('nodemailer'),
+  // nodemailer = require('nodemailer'),
   ejs = require('ejs'),
   ejsLayouts = require('express-ejs-layouts'),
   methodOverride = require('method-override'),
   jwt = require('jsonwebtoken'),
   Bitly = require('bitly'),
   bitly = new Bitly('b4ec80a1062537de1006970c9b65eb1217cb624d'),
+  request = require('superagent'),
+  mailchimpInstance = process.env.MAILCHIMP_INSTANCE,
+  mailchimpListUniqueId = process.env.MAILCHIMP_UNIQUE_ID,
+  mailchimpApiKey = process.env.MAILCHIMP_APIKEY,
   port = (process.env.PORT || 3000),
   mongoConnectionString = (process.env.MONGODB_URL || 'mongodb://localhost/winit-app'),
   messageRoutes = require('./routes/messages.js'),
@@ -43,6 +47,21 @@ app.get('/', (req, res) => {
 });
 
 app.post('/contact', (req, res) => {
+  request
+    .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/lists/' + mailchimpListUniqueId + '/members/')
+    .set('Content-Type', 'application/json;charset=utf-8')
+    .set('Authorization', 'Basic ' + new Buffer('any:' + mailchimpApiKey).toString('base64'))
+    .send({
+      'email_address': req.body.contact,
+      'message': req.body.message,
+      'status': 'subscribed',
+    })
+      .end((err, response) => {
+        if (err) console.log(err);
+        console.log('The response is: ');
+        console.log(response.text);
+      });
+
   const newMessage = new Message(req.body);
   newMessage.save((err, message) => {
     if (err) console.log(err);
@@ -63,7 +82,8 @@ app.get('/token/:id', (req, res) => {
   const decoded = jwt.verify(req.params.id, 'shhhhh');
   Message.findById(decoded.messageId, (err, message) => {
     if (err) res.json({ error: '401' });
-    res.render('message', { message });
+    console.log("In the api -- redirecting to messages/id");
+    res.redirect(`/messages/${message._id}`);
   });
 });
 

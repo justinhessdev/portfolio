@@ -74,7 +74,12 @@ messageRouter.route('/')
 messageRouter.route('/:id')
   .get((req, res) => {
     Message.findById(req.params.id, (err, message) => {
-      res.json(message);
+      if (req.xhr) {
+        res.json(message);
+      } else {
+        console.log('I am routing to message');
+        res.render('message', { message });
+      }
     });
   })
   .delete((req, res) => {

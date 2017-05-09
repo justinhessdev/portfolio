@@ -46,6 +46,7 @@
     "method-override": "^2.3.8",
     "mongoose": "^4.9.8",
     "morgan": "^1.8.1",
-    "nodemailer": "^4.0.1"
+    "nodemailer": "^4.0.1",
+    "superagent": "^3.5.2"
   }
 }
