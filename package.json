@@ -43,6 +43,7 @@
     "express": "^4.15.2",
     "express-ejs-layouts": "^2.3.0",
     "jsonwebtoken": "^7.4.0",
+    "mandrill-api": "^1.0.45",
     "method-override": "^2.3.8",
     "mongoose": "^4.9.8",
     "morgan": "^1.8.1",

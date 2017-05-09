@@ -20,6 +20,8 @@ const
   mailchimpInstance = process.env.MAILCHIMP_INSTANCE,
   mailchimpListUniqueId = process.env.MAILCHIMP_UNIQUE_ID,
   mailchimpApiKey = process.env.MAILCHIMP_APIKEY,
+  mandrill = require('mandrill-api/mandrill'),
+  mandrill_client = new mandrill.Mandrill('ZJQLHrdW1ODYmZu9IfOH1Q'),
   port = (process.env.PORT || 3000),
   mongoConnectionString = (process.env.MONGODB_URL || 'mongodb://localhost/winit-app'),
   messageRoutes = require('./routes/messages.js'),
@@ -73,6 +75,18 @@ app.post('/contact', (req, res) => {
         console.log('The response is: ');
         console.log(response.text);
       });
+
+
+  mandrill_client.messages.send({
+    "message": {
+        "from_email": "winitdevproject@gmail.com",
+        "from_name": "Mr Winit",
+        "to":[{"email": req.body.email, "name": "someone's_name"}], // Array of recipients
+        "subject": "Winit Email",
+        "text": req.body.message // Alternatively, use the "html" key to send HTML emails rather than plaintext
+    },
+  });
+
 
   const newMessage = new Message(req.body);
   newMessage.save((err, message) => {
