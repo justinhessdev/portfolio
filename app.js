@@ -104,15 +104,15 @@ app.post('/contact', (req, res) => {
       const transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-          user: 'winitdevproject@gmail.com',
-          pass: 'winit12345',
+          user: process.env.NODEMAILER_USER,
+          pass: process.env.NODEMAILER_PASSWORD,
         },
       });
 
       const text = `Congrats! You received the special email. Click this link to see your hidden message: ${shortUrl}`;
       console.log('created');
       transporter.sendMail({
-        from: 'winitdevproject@gmail.com',
+        from: process.env.NODEMAILER_USER,
         to: req.body.contact,
         subject: 'Winit Email',
         html: text,
