@@ -126,7 +126,7 @@
 	      genToken = jwt.sign({ messageId: message._id }, 'shhhhh'),
 	      genURL = `${process.env.HEROKU_URL}/token/${genToken}`;    
 	      
-##### URL: https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc
+##### URL: `https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc`
 
 ##### Then I shorten the URL using Bityl: npm install bitly --save
 
@@ -166,7 +166,7 @@
 
 ![Alt text](./public/img/winit-gmail.png?raw=true "Email message")
 
-##### Now: When the user clicks on the Bitly link it generates the longUrl: https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc which in turn hits my API:
+##### Now: When the user clicks on the Bitly link it generates the longUrl: `https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc` which in turn hits my API:
 
 	app.get('/token/:id', (req, res) => {
 	    // verify a token symmetric - synchronous
@@ -177,7 +177,7 @@
 	  });
 	});
 	
-##### Then the API decodes the id: aaaaaa.bbbbbb.cccccc and we grab the message id that was in the Payload. We validate the message id against our DB. If it's there we Redirect to /messages/messageId which hits our route:
+##### Then the API decodes the id: `aaaaaa.bbbbbb.cccccc` and we grab the message id that was in the Payload. We validate the message id against our DB. If it's there we Redirect to `/messages/messageId` which hits our route:
 
 
 ###### routes/messages.js:
@@ -228,11 +228,11 @@
 
 ![Alt text](./public/img/winit-open-link.png?raw=true "Contact Form")
 
-###### And Notice how the URL was redirected from the API: /token/:id to messages/:id
+###### And Notice how the URL was redirected from the API: `/token/:id` to `messages/:id`
 
 ###### Side Notes: 
 
-######1. I use EJS-Layout for my views.
+###### 1. I use EJS-Layout for my views.
 
 ###### views/layout.ejs
 
@@ -264,7 +264,7 @@
 		</body>
 	</html>
 
-###### This is the main view and all other views are rendered in <%- body %> This is great because we only need to decalare our scripts and links one time.
+###### This is the main view and all other views are rendered in <%- body %> This is great because we only need to declare our scripts and links one time.
 
 ###### 2. I used a linter: eslint --init
    
