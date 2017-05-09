@@ -64,10 +64,10 @@ app.get('/token/:id' , (req, res) => {
   // verify a token symmetric - synchronous
   var decoded = jwt.verify(req.params.id, 'shhhhh');
   console.log(decoded.messageId) // messageId --- payload
-  
+
   Message.findById(decoded.messageId, (err, message) => {
     if (err) res.json({error: err})
-    res.render('message', message)
+    res.redirect('/messages/'+message._id, {message})
   })
 })
 
