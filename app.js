@@ -49,16 +49,7 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/messages/:id', (req, res) => {
-  Message.findById(req.params.id, (err, message) => {
-    if (req.xhr) {
-      res.json(message);
-    } else {
-      console.log('I am now in app js -- routing to messageß');
-      res.render('message', { message });
-    }
-  });
-});
+
 
 app.post('/contact', (req, res) => {
   /*
@@ -90,14 +81,12 @@ app.post('/contact', (req, res) => {
   //       "from_name": "Mr Winit",
   //       "to":[{"email": req.body.contact, "name": "someone's_name"}], // Array of recipients
   //       "subject": "Winit Email",
-  //       "text": req.body.message, // Alternatively, use the "html" key to send HTML emails rather than plaintext
+  //       "text": req.body.message, // Alternatively, use the "html" key
+  //                                to send HTML emails rather than plaintext
   //   },
   // }, (response) => {
   //   console.log(response);
   // });
-
-
-
 /*
   Workaround: Generate a new page with bitly link.
   When clikced get forwarded to API call and displays the info
@@ -120,7 +109,8 @@ app.post('/contact', (req, res) => {
         },
       });
 
-      const text = `http://${shortUrl}`
+      const text = `Congrats! You received the special email.
+      \nTo view the hidden message click this link: ${shortUrl}`
       console.log('created');
       transporter.sendMail({
         from: 'winitdevproject@gmail.com',
