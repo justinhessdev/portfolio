@@ -96,21 +96,7 @@ app.post('/contact', (req, res) => {
   //   console.log(response);
   // });
 
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: 'winitdevproject@gmail.com',
-      pass: 'winit12345',
-    },
-  });
 
-  console.log('created');
-  transporter.sendMail({
-    from: 'winitdevproject@gmail.com',
-    to: req.body.contact,
-    subject: 'Winit Email',
-    text: 'link',
-  });
 
 /*
   Workaround: Generate a new page with bitly link.
@@ -126,7 +112,35 @@ app.post('/contact', (req, res) => {
     bitly.shorten(genURL)
     .then((response) => {
       const shortUrl = response.data.url;
-      res.render('token', { shortUrl });
+      const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'winitdevproject@gmail.com',
+          pass: 'winit12345',
+        },
+      });
+
+      const text = `http://${shortUrl}`
+      console.log('created');
+      transporter.sendMail({
+        from: 'winitdevproject@gmail.com',
+        to: req.body.contact,
+        subject: 'Winit Email',
+        html: text,
+      }, (error, info) => {
+        if (error) {
+          console.log(error);
+          res.json({ failure: 'error' });
+        } else {
+          console.log('Message sent: ' + info.response);
+          res.json({
+            success: 'Your message was sent',
+            'next steps': 'I will respond to your email shortly',
+          });
+        }
+      });
+
+
     });
   });
 });
