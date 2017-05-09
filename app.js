@@ -1,4 +1,5 @@
 const
+    dotenv = require('dotenv').load({silent: true}),
     express = require('express'),
     app = express(),
     mongoose = require('mongoose'),
@@ -14,6 +15,9 @@ const
     messageRoutes = require('./routes/messages.js'),
     Message = require('./models/Message.js'),
     Token = require('./models/Token.js')
+
+console.log("The mongodb url is: ");
+console.log(process.env.MONGODB_URL);
 
 // mongoose connection
 mongoose.connect(mongoConnectionString, (err) => {
