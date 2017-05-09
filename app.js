@@ -61,7 +61,14 @@ app.post('/contact' , (req, res) => {
 })
 
 app.get('/token/:id' , (req, res) => {
-  res.json({token: req.params.id})
+  // verify a token symmetric - synchronous
+  var decoded = jwt.verify(req.params.id, 'shhhhh');
+  console.log(decoded.messageId) // bar
+
+  res.json({
+    token: req.params.id,
+    decoded: decoded.messageId
+  })
 })
 
 
