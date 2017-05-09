@@ -70,8 +70,10 @@ app.get('/token/:id' , (req, res) => {
     console.log("The message is: ");
     console.log(message);
     console.log(req.query);
-    res.redirect('/messages/'+message._id)
-    // res.render('message', {message})
+
+    res.render('message', {message}, (err, m)=> {
+      res.redirect('/messages/'+message._id)
+    })
   })
 })
 
