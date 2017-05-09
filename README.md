@@ -2,7 +2,7 @@
 
 #### App is hosted on Heroku: <https://winit-app.herokuapp.com>
 
-##### Intstructions: 
+##### Instructions: 
 
 ###### 1. Clone the Repo: git clone https://github.com/justinhessdev/winit-app.git
 ###### 2. Install Dependencies: npm install
@@ -10,7 +10,7 @@
 ###### 4. Run: nodemon
 ###### 5. Walla, the app is up and running on localhost:3000
 
-### General Layout:
+### Rundown:
 ###### A user fills out this form:
 
 ![Alt text](./public/img/winit-form.png?raw=true "Contact Form")
@@ -70,9 +70,6 @@
 ###### app.js --- handling POST request to '/contact':
 
 	app.post('/contact', (req, res) => {
-	/*
-	  USING NODEMAILER MODULE
-	*/
 	  const newMessage = new Message(req.body);
 	  newMessage.save((err, message) => {
 	    if (err) { return console.log(err); }
@@ -171,9 +168,6 @@
 
 ##### Now: When the user clicks on the Bitly link it generates the longUrl: https://winit-app.herokuapp.com/token/aaaaaa.bbbbbb.cccccc which in turn hits my API:
 
-	/*
-		API
-	*/
 	app.get('/token/:id', (req, res) => {
 	    // verify a token symmetric - synchronous
 	  const decoded = jwt.verify(req.params.id, 'shhhhh');
@@ -235,3 +229,54 @@
 ![Alt text](./public/img/winit-open-link.png?raw=true "Contact Form")
 
 ###### And Notice how the URL was redirected from the API: /token/:id to messages/:id
+
+###### Side Notes: 
+
+######1. I use EJS-Layout for my views.
+
+###### views/layout.ejs
+
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+		    <meta charset="utf-8">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="viewport" content="width=device-width, initial-scale=1">
+		    <meta name="description" content="">
+		    <meta name="author" content="">
+		
+		    <title>Winit App</title>
+		
+		    <!-- Bootstrap Core CSS -->
+		    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		    <link ...>
+		
+		    <!-- Bootstrap Core JavaScript -->
+		    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+		    <script ...></script>
+		</head>
+		<body>
+		
+		  <div class="container">
+		      <%- body %>
+		  </div>
+		
+		</body>
+	</html>
+
+###### This is the main view and all other views are rendered in <%- body %> This is great because we only need to decalare our scripts and links one time.
+
+###### 2. I used a linter: eslint --init
+   
+###### .eslintrc.yml:
+   
+	extends: airbnb-base
+	plugins:
+		- import
+
+###### 3. TODO: 
+	1. Better field validation
+	2. Phone number option
+	3. Improve URL encoding
+	4. Throw better errors
+	5. Enhance frontend
