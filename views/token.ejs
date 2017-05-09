@@ -2,10 +2,14 @@
   <h1>Email: <%- message.contact %></h1>
 
   <h5>To view content click the link below</h5>
-    <div>Token:<a id="<%= token.token %>"><%- token.token %></a></div>
+  <div>Token:
+    <a href="https://winit-app.herokuapp.com/token/<%= token.token =>">
+    https://winit-app.herokuapp.com/token/<%- token.token %>
+    </a>
+  </div>
 </div>
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
   $('#<%= token.token %>').on('click', function(evt) {
     console.log('clickeddddd');
     $.ajax({
@@ -15,4 +19,4 @@
       console.log(message);
     })
   })
-</script>
+</script> -->
