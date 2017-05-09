@@ -15,13 +15,13 @@ const
   methodOverride = require('method-override'),
   jwt = require('jsonwebtoken'),
   Bitly = require('bitly'),
-  bitly = new Bitly('b4ec80a1062537de1006970c9b65eb1217cb624d'),
+  bitly = new Bitly(process.env.BITLY),
   request = require('superagent'),
   mailchimpInstance = process.env.MAILCHIMP_INSTANCE,
   mailchimpListUniqueId = process.env.MAILCHIMP_UNIQUE_ID,
   mailchimpApiKey = process.env.MAILCHIMP_APIKEY,
   mandrill = require('mandrill-api/mandrill'),
-  mandrill_client = new mandrill.Mandrill('ZJQLHrdW1ODYmZu9IfOH1Q'),
+  mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_CLIENT),
   port = (process.env.PORT || 3000),
   mongoConnectionString = (process.env.MONGODB_URL || 'mongodb://localhost/winit-app'),
   messageRoutes = require('./routes/messages.js'),
@@ -61,6 +61,9 @@ app.get('/messages/:id', (req, res) => {
 });
 
 app.post('/contact', (req, res) => {
+  /*
+  MAILCHIMP LOGIC ...
+  */
   // request
   //   .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/lists/' + mailchimpListUniqueId + '/members/')
   //   .set('Content-Type', 'application/json;charset=utf-8')
@@ -76,7 +79,11 @@ app.post('/contact', (req, res) => {
   //       console.log(response.text);
   //     });
 
+/*
+  MANDRILL LOGIC -- NOT WORKING BC OF DKIM and SPF SETTINGS
 
+  text -- eventually would contain link...
+*/
   mandrill_client.messages.send({
     "message": {
         "from_email": "winitdevproject@gmail.com",
@@ -89,7 +96,10 @@ app.post('/contact', (req, res) => {
     console.log(response);
   });
 
-
+/*
+  Workaround: Generate a new page with bitly link.
+  When clikced get forwarded to API call and displays the info
+*/
   const newMessage = new Message(req.body);
   newMessage.save((err, message) => {
     if (err) console.log(err);
