@@ -52,7 +52,7 @@ app.get('/messages/:id', (req, res) => {
     if (req.xhr) {
       res.json(message);
     } else {
-      console.log('I am routing to message');
+      console.log('I am now in app js -- routing to messageß');
       res.render('message', { message });
     }
   });
