@@ -9,7 +9,7 @@ const
   logger = require('morgan'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  // nodemailer = require('nodemailer'),
+  nodemailer = require('nodemailer'),
   ejs = require('ejs'),
   ejsLayouts = require('express-ejs-layouts'),
   methodOverride = require('method-override'),
@@ -84,16 +84,32 @@ app.post('/contact', (req, res) => {
 
   text -- eventually would contain link...
 */
-  mandrill_client.messages.send({
-    "message": {
-        "from_email": "winitdevproject@gmail.com",
-        "from_name": "Mr Winit",
-        "to":[{"email": req.body.contact, "name": "someone's_name"}], // Array of recipients
-        "subject": "Winit Email",
-        "text": req.body.message, // Alternatively, use the "html" key to send HTML emails rather than plaintext
+  // mandrill_client.messages.send({
+  //   "message": {
+  //       "from_email": "winitdevproject@gmail.com",
+  //       "from_name": "Mr Winit",
+  //       "to":[{"email": req.body.contact, "name": "someone's_name"}], // Array of recipients
+  //       "subject": "Winit Email",
+  //       "text": req.body.message, // Alternatively, use the "html" key to send HTML emails rather than plaintext
+  //   },
+  // }, (response) => {
+  //   console.log(response);
+  // });
+
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'winitdevproject@gmail.com',
+      pass: 'winit12345',
     },
-  }, (response) => {
-    console.log(response);
+  });
+
+  console.log('created');
+  transporter.sendMail({
+    from: 'winitdevproject@gmail.com',
+    to: req.body.contact,
+    subject: 'Winit Email',
+    text: 'link',
   });
 
 /*
