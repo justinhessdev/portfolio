@@ -1,6 +1,6 @@
 # Winit App
 
-#### App is hosted on Heroku: <https://winit-app.herokuapp.com>
+#### App is hosted on Heroku: <https://jwt-app.herokuapp.com>
 
 ##### Instructions: 
 
